@@ -1091,7 +1091,7 @@
             document.body.appendChild(printDiv);
             
             try {
-                const pdfBase64 = await html2pdf().set({
+                const pdfBase64Raw = await html2pdf().set({
                     margin: 10,
                     filename: 'solicitud.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
@@ -1100,6 +1100,9 @@
                 }).from(printDiv).outputPdf('datauristring');
                 
                 document.body.removeChild(printDiv);
+
+                // Strip the base64 prefix
+                const pdfBase64 = pdfBase64Raw.includes('base64,') ? pdfBase64Raw.split('base64,')[1] : pdfBase64Raw;
 
                 const getWeekNumber = (d) => {
                     d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -1114,19 +1117,26 @@
                     turno: "N/A", 
                     horasTotales: req.empleados.reduce((acc, w) => acc + w.horasCalculadas, 0).toFixed(2),
                     pdfBase64: pdfBase64,
-                    pdfName: "Sol_" + req.supervisor.replace(/\\s+/g, '_') + "_" + req.fecha + ".pdf"
+                    pdfName: "Sol_" + req.supervisor.replace(/\s+/g, '_') + "_" + req.fecha + ".pdf"
                 };
 
                 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxUTAW_jUecbgx0Hi_hwmtWSyqeRNzvh_3hjeWjqBBNnh6hpOOs92cg8HaEYQxMdK17g/exec";
 
-                await fetch(GOOGLE_SCRIPT_URL, {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(dataPayload),
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
+                
+                if (!response.ok && response.type !== 'opaque') {
+                    throw new Error("HTTP Status " + response.status);
+                }
+                
+                return true;
             } catch (err) {
                 console.error("Error enviando a Drive:", err);
                 if (printDiv.parentNode) document.body.removeChild(printDiv);
+                throw err;
             }
         }
 
@@ -1201,6 +1211,10 @@
             document.getElementById("sup-fecha").valueAsDate = new Date();
             currentWorkers = [];
             renderWorkerList();
+            }).catch(err => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                alert("Hubo un error al guardar en Drive: " + err.message + "\nPor favor revisa consola e intenta de nuevo.");
             }); // Cierre de enviarAGoogleDrive.then
         }
 
