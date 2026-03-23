@@ -1131,6 +1131,20 @@
                 if (!response.ok && response.type !== 'opaque') {
                     throw new Error("HTTP Status " + response.status);
                 }
+
+                // Leer respuesta si está disponible
+                try {
+                    const text = await response.text();
+                    if (text) {
+                        const json = JSON.parse(text);
+                        if (json.status === 'error') {
+                            throw new Error("El servidor de Google rechazó la solicitud: " + json.message);
+                        }
+                    }
+                } catch (parseErr) {
+                    // Si falla el parseo o lanza el error de la línea 1133, arrojarlo hacia afuera
+                    if (parseErr.message.includes("El servidor de Google")) throw parseErr;
+                }
                 
                 return true;
             } catch (err) {
