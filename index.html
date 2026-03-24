@@ -1081,25 +1081,19 @@
         }
 
         async function enviarAGoogleDrive(req, htmlStr) {
-            const printDiv = document.createElement('div');
-            printDiv.innerHTML = htmlStr;
-            printDiv.style.width = "1000px";
-            printDiv.style.padding = "20px";
-            printDiv.style.background = "white";
-            printDiv.style.position = "absolute";
-            printDiv.style.left = "-9999px";
-            document.body.appendChild(printDiv);
-            
             try {
+                // Se pasa directamente el string HTML a html2pdf para evitar recortes (blank PDF bounds bounds) 
+                // cuando se posiciona fuera de pantalla (left: -9999px).
+                const wrapperHTML = `<div style="width: 1000px; padding: 20px; background: white;">${htmlStr}</div>`;
+                
                 const pdfBase64Raw = await html2pdf().set({
                     margin: 10,
                     filename: 'solicitud.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2 },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-                }).from(printDiv).outputPdf('datauristring');
-                
-                document.body.removeChild(printDiv);
+                }).from(wrapperHTML).outputPdf('datauristring');
+
 
                 // Strip the base64 prefix
                 const pdfBase64 = pdfBase64Raw.includes('base64,') ? pdfBase64Raw.split('base64,')[1] : pdfBase64Raw;
@@ -1149,7 +1143,6 @@
                 return true;
             } catch (err) {
                 console.error("Error enviando a Drive:", err);
-                if (printDiv.parentNode) document.body.removeChild(printDiv);
                 throw err;
             }
         }
