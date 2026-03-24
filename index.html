@@ -1006,28 +1006,31 @@
 
         function generarHtmlParaPdf(req) {
             const reqDateFormatted = new Date(req.creadoEn).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' });
+            
+            // Flexbox container simulating A4 Landscape (1122px by 790px)
             let tbHtml = `
-                <div style="font-family: Arial, sans-serif; color: #000; background: #fff; padding: 20px;">
-                    <h2 style="text-align:center; font-size: 20px; text-transform:uppercase; margin-bottom: 20px;">Autorización Oficial de Tiempo Extra</h2>
+                <div style="width: 1122px; min-height: 790px; font-family: Arial, sans-serif; color: #000; background: #fff; padding: 40px; box-sizing: border-box; display: flex; flex-direction: column;">
+                    
+                    <h2 style="text-align:center; font-size: 22px; text-transform:uppercase; margin-top: 0; margin-bottom: 20px;">Autorización Oficial de Tiempo Extra</h2>
                     <table style="width:100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
                         <tr>
-                            <td style="padding: 5px; border: 1px solid #ccc;"><strong>Supervisor:</strong> ${req.supervisor}</td>
-                            <td style="padding: 5px; border: 1px solid #ccc;"><strong>Líder de Proyecto:</strong> ${req.lider}</td>
-                            <td style="padding: 5px; border: 1px solid #ccc;"><strong>Fecha T.E.:</strong> ${req.fecha}</td>
+                            <td style="padding: 8px; border: 1px solid #ccc;"><strong>Supervisor:</strong> ${req.supervisor}</td>
+                            <td style="padding: 8px; border: 1px solid #ccc;"><strong>Líder de Proyecto:</strong> ${req.lider}</td>
+                            <td style="padding: 8px; border: 1px solid #ccc;"><strong>Fecha T.E.:</strong> ${req.fecha}</td>
                         </tr>
                     </table>
 
-                    <table style="width:100%; border-collapse: collapse; font-size: 12px; margin-bottom: 40px; text-align: center;">
+                    <table style="width:100%; border-collapse: collapse; font-size: 13px; text-align: center;">
                         <thead>
                             <tr style="background:#f0f0f0;">
-                                <th style="border: 1px solid #000; padding: 6px;">No. Empleado</th>
-                                <th style="border: 1px solid #000; padding: 6px; text-align: left;">Nombre</th>
-                                <th style="border: 1px solid #000; padding: 6px; text-align: left;">Área</th>
-                                <th style="border: 1px solid #000; padding: 6px; text-align: left;">Propósito</th>
-                                <th style="border: 1px solid #000; padding: 6px;">Hora Inicio</th>
-                                <th style="border: 1px solid #000; padding: 6px;">Hora Fin</th>
-                                <th style="border: 1px solid #000; padding: 6px;">Hrs Totales</th>
-                                <th style="border: 1px solid #000; padding: 6px; width: 18%;">Firma del Trabajador</th>
+                                <th style="border: 1px solid #000; padding: 8px;">No. Empleado</th>
+                                <th style="border: 1px solid #000; padding: 8px; text-align: left;">Nombre</th>
+                                <th style="border: 1px solid #000; padding: 8px; text-align: left;">Área</th>
+                                <th style="border: 1px solid #000; padding: 8px; text-align: left;">Propósito</th>
+                                <th style="border: 1px solid #000; padding: 8px;">Hora Inicio</th>
+                                <th style="border: 1px solid #000; padding: 8px;">Hora Fin</th>
+                                <th style="border: 1px solid #000; padding: 8px;">Hrs Totales</th>
+                                <th style="border: 1px solid #000; padding: 8px; width: 18%;">Firma del Trabajador</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1039,14 +1042,14 @@
                 sumaHoras += emp.horasCalculadas;
                 tbHtml += `
                             <tr>
-                                <td style="border: 1px solid #000; padding: 6px;">${emp.id}</td>
-                                <td style="border: 1px solid #000; padding: 6px; text-align: left;">${emp.nombre}</td>
-                                <td style="border: 1px solid #000; padding: 6px; text-align: left;">${emp.area}</td>
-                                <td style="border: 1px solid #000; padding: 6px; text-align: left;">${emp.proposito || '-'}</td>
-                                <td style="border: 1px solid #000; padding: 6px;">${emp.horaInicio}</td>
-                                <td style="border: 1px solid #000; padding: 6px;">${emp.horaFin}</td>
-                                <td style="border: 1px solid #000; padding: 6px;">${emp.horasCalculadas.toFixed(2)}</td>
-                                <td style="border: 1px solid #000; padding: 6px; height: 45px;"></td>
+                                <td style="border: 1px solid #000; padding: 8px;">${emp.id}</td>
+                                <td style="border: 1px solid #000; padding: 8px; text-align: left;">${emp.nombre}</td>
+                                <td style="border: 1px solid #000; padding: 8px; text-align: left;">${emp.area}</td>
+                                <td style="border: 1px solid #000; padding: 8px; text-align: left;">${emp.proposito || '-'}</td>
+                                <td style="border: 1px solid #000; padding: 8px;">${emp.horaInicio}</td>
+                                <td style="border: 1px solid #000; padding: 8px;">${emp.horaFin}</td>
+                                <td style="border: 1px solid #000; padding: 8px;">${emp.horasCalculadas.toFixed(2)}</td>
+                                <td style="border: 1px solid #000; padding: 8px; height: 50px;"></td>
                             </tr>
                 `;
             });
@@ -1055,34 +1058,38 @@
                         </tbody>
                         <tfoot>
                             <tr style="background:#f9f9f9;">
-                                <td colspan="6" style="border: 1px solid #000; padding: 6px; text-align: right; font-weight: bold;">TOTAL HORAS PROGRAMADAS:</td>
-                                <td style="border: 1px solid #000; padding: 6px; font-weight: bold;">${sumaHoras.toFixed(2)}</td>
-                                <td style="border: 1px solid #000; padding: 6px;"></td>
+                                <td colspan="6" style="border: 1px solid #000; padding: 8px; text-align: right; font-weight: bold;">TOTAL HORAS PROGRAMADAS:</td>
+                                <td style="border: 1px solid #000; padding: 8px; font-weight: bold; color: #2563eb;">${sumaHoras.toFixed(2)}</td>
+                                <td style="border: 1px solid #000; padding: 8px;"></td>
                             </tr>
                         </tfoot>
                     </table>
 
-                    <div style="margin-top: 50px; page-break-inside: avoid;">
-                        <table style="width:100%; border: none; text-align: center; font-size: 14px;">
+                    <!-- Flex Spacer to push signatures to bottom -->
+                    <div style="flex-grow: 1;"></div>
+
+                    <!-- Signatures Section -->
+                    <div style="margin-top: 60px; page-break-inside: avoid;">
+                        <table style="width:100%; border: none; text-align: center; font-size: 14px; table-layout: fixed;">
                             <tr>
-                                <td style="width: 25%; padding: 0 10px;">
-                                    <div style="border-bottom: 1px solid #000; width: 100%; height: 40px;"></div>
-                                    <div style="margin-top: 5px;">Solicitó:<br><strong>${req.supervisor}</strong></div>
+                                <td style="padding: 0 15px;">
+                                    <div style="border-bottom: 1px solid #000; width: 100%; height: 30px;"></div>
+                                    <div style="margin-top: 8px;">Solicitó:<br><strong>${req.supervisor}</strong></div>
                                     <span style="font-size: 11px; color: #555;">Supervisor Responsable</span>
                                 </td>
-                                <td style="width: 25%; padding: 0 10px;">
-                                    <div style="border-bottom: 1px solid #000; width: 100%; height: 40px;"></div>
-                                    <div style="margin-top: 5px;">Autorizó:<br><strong>${req.lider}</strong></div>
+                                <td style="padding: 0 15px;">
+                                    <div style="border-bottom: 1px solid #000; width: 100%; height: 30px;"></div>
+                                    <div style="margin-top: 8px;">Autorizó:<br><strong>${req.lider}</strong></div>
                                     <span style="font-size: 11px; color: #555;">Líder de Proyecto</span>
                                 </td>
-                                <td style="width: 25%; padding: 0 10px;">
-                                    <div style="border-bottom: 1px solid #000; width: 100%; height: 40px;"></div>
-                                    <div style="margin-top: 5px;">Validó Sec. RH:<br><strong>Lic. Omar López</strong></div>
+                                <td style="padding: 0 15px;">
+                                    <div style="border-bottom: 1px solid #000; width: 100%; height: 30px;"></div>
+                                    <div style="margin-top: 8px;">Validó Sec. RH:<br><strong>Lic. Omar López</strong></div>
                                     <span style="font-size: 11px; color: #555;">Recursos Humanos</span>
                                 </td>
-                                <td style="width: 25%; padding: 0 10px;">
-                                    <div style="border-bottom: 1px solid #000; width: 100%; height: 40px;"></div>
-                                    <div style="margin-top: 5px;">Por Vigilancia:<br>&nbsp;</div>
+                                <td style="padding: 0 15px;">
+                                    <div style="border-bottom: 1px solid #000; width: 100%; height: 30px;"></div>
+                                    <div style="margin-top: 8px;">Por Vigilancia:<br>&nbsp;</div>
                                     <span style="font-size: 11px; color: #555;">Firma de Conformidad</span>
                                 </td>
                             </tr>
