@@ -1109,7 +1109,8 @@
                     filename: 'solicitud.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2 },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+                    pagebreak: { mode: 'avoid-all' }
                 }).from(wrapperHTML).outputPdf('datauristring');
 
 
