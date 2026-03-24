@@ -1115,17 +1115,16 @@
                 });
                 document.body.appendChild(printDiv);
 
-                const canvas = await html2pdf().set({
+                const pdfBase64Raw = await html2pdf().set({
                     margin: 10,
                     filename: 'solicitud.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, windowWidth: 1040, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-                }).from(printDiv).outputPdf('datauristring').finally(() => {
-                    if (printDiv.parentNode) document.body.removeChild(printDiv);
-                });
+                }).from(printDiv).outputPdf('datauristring');
 
-                const pdfBase64Raw = canvas;
+                // Clean up DOM element after awaiting
+                if (printDiv.parentNode) document.body.removeChild(printDiv);
 
 
                 // Strip the base64 prefix
