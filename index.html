@@ -1007,9 +1007,9 @@
         function generarHtmlParaPdf(req) {
             const reqDateFormatted = new Date(req.creadoEn).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' });
             
-            // Fixed container simulating A4 Landscape (1122px by 790px) without Flexbox bugs
+            // Simple flow container without fixed heights so html2pdf natively handles pagination perfectly
             let tbHtml = `
-                <div style="width: 1122px; height: 790px; position: relative; font-family: Arial, sans-serif; color: #000; background: #fff; padding: 40px; box-sizing: border-box; overflow: hidden;">
+                <div style="font-family: Arial, sans-serif; color: #000; background: #fff; padding: 20px;">
                     
                     <h2 style="text-align:center; font-size: 22px; text-transform:uppercase; margin-top: 0; margin-bottom: 20px;">Autorización Oficial de Tiempo Extra</h2>
                     <table style="width:100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
@@ -1065,8 +1065,8 @@
                         </tfoot>
                     </table>
 
-                    <!-- Signatures Section fixed at the bottom -->
-                    <div style="position: absolute; bottom: 40px; left: 40px; width: 1042px;">
+                    <!-- Signatures Section with normal margin to let it flow organically -->
+                    <div style="margin-top: 80px; page-break-inside: avoid;">
                         <table style="width:100%; border: none; text-align: center; font-size: 14px; table-layout: fixed;">
                             <tr>
                                 <td style="padding: 0 15px;">
@@ -1103,8 +1103,8 @@
 
         async function enviarAGoogleDrive(req, htmlStr) {
             try {
-                // Se pasa directamente el string HTML a html2pdf usando un wrapper simple sin alturas conflictivas
-                const wrapperHTML = `<div style="width: 1122px; background: white; margin: 0; padding: 0;">${htmlStr}</div>`;
+                // Se restablece el wrapper original que probamos con exito
+                const wrapperHTML = `<div style="width: 1000px; padding: 20px; background: white;">${htmlStr}</div>`;
                 
                 const pdfBase64Raw = await html2pdf().set({
                     margin: 10,
