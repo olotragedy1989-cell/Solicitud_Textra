@@ -1100,31 +1100,17 @@
 
         async function enviarAGoogleDrive(req, htmlStr) {
             try {
-                // Render the PDF using a real DOM element (not a string) for guaranteed html2canvas compatibility
-                const printDiv = document.createElement('div');
-                printDiv.innerHTML = htmlStr;
-                Object.assign(printDiv.style, {
-                    position: 'fixed',
-                    top: '0',
-                    left: '0',
-                    width: '1000px',
-                    background: 'white',
-                    padding: '20px',
-                    zIndex: '-9999',
-                    visibility: 'hidden'
-                });
-                document.body.appendChild(printDiv);
-
+                // Se pasa directamente el string HTML a html2pdf para evitar recortes (blank PDF bounds bounds) 
+                // cuando se posiciona fuera de pantalla (left: -9999px).
+                const wrapperHTML = `<div style="width: 1000px; padding: 20px; background: white;">${htmlStr}</div>`;
+                
                 const pdfBase64Raw = await html2pdf().set({
                     margin: 10,
                     filename: 'solicitud.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, windowWidth: 1040, useCORS: true, logging: false },
+                    html2canvas: { scale: 2 },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-                }).from(printDiv).outputPdf('datauristring');
-
-                // Clean up DOM element after awaiting
-                if (printDiv.parentNode) document.body.removeChild(printDiv);
+                }).from(wrapperHTML).outputPdf('datauristring');
 
 
                 // Strip the base64 prefix
